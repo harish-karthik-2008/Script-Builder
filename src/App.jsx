@@ -1,19 +1,3 @@
-// import { BrowserRouter, Routes, Route } from "react-router-dom";
-// import Home from "./pages/Home";
-// import Editor from "./pages/Editor";
-// import Saved from "./pages/Saved";
-
-// export default function App() {
-//   return (
-//     <BrowserRouter>
-//       <Routes>
-//         <Route path="/" element={<Home />} />
-//         <Route path="/editor" element={<Editor />} />
-//         <Route path="/saved" element={<Saved />} />
-//       </Routes>
-//     </BrowserRouter>
-//   );
-// }
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Plus,
@@ -50,7 +34,7 @@ const BLOCK_TYPES = [
   { type: "lyrics", label: "Lyrics", hint: "Song lyrics" },
   { type: "image", label: "Image", hint: "Paste image URL" },
   { type: "sequence", label: "Sequence", hint: "Sequence title" },
-  { type: "dual", label: "Dual", hint: "Left || Right" },
+  { type: "dual", label: "Dual", hint: "LEFT DIALOGUE || RIGHT DIALOGUE" },
 ];
 
 const DEFAULT_SCRIPT = () => ({
@@ -87,7 +71,7 @@ function slugify(text) {
 }
 
 function getBlockStyle(type) {
-  const base = "w-full bg-transparent outline-none resize-none";
+  const base = "w-full bg-transparent outline-none resize-none text-[15px] leading-7";
   switch (type) {
     case "scene":
     case "transition":
@@ -106,8 +90,6 @@ function getBlockStyle(type) {
       return `${base} text-amber-900`;
     case "outline":
       return `${base} text-blue-900 font-medium`;
-    case "dual":
-      return `${base}`;
     default:
       return base;
   }
@@ -155,7 +137,7 @@ function blockWrapper(type) {
 function autoGrow(el) {
   if (!el) return;
   el.style.height = "auto";
-  el.style.height = `${Math.max(44, el.scrollHeight)}px`;
+  el.style.height = `${Math.max(48, el.scrollHeight)}px`;
 }
 
 function scriptToText(script) {
@@ -195,7 +177,10 @@ export default function App() {
   const [activeId, setActiveId] = useState(() => localStorage.getItem(ACTIVE_KEY) || null);
   const [search, setSearch] = useState("");
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
-  const [showLeftPanel, setShowLeftPanel] = useState(true);
+  const [showLeftPanel, setShowLeftPanel] = useState(() => {
+    if (typeof window === "undefined") return true;
+    return window.innerWidth >= 768;
+  });
   const [viewMode, setViewMode] = useState(() => localStorage.getItem(VIEW_KEY) || "editor");
   const editorRefs = useRef({});
 
@@ -215,6 +200,17 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem(VIEW_KEY, viewMode);
   }, [viewMode]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setShowMobileSidebar(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const activeScript = useMemo(
     () => scripts.find((s) => s.id === activeId) || scripts[0],
@@ -293,7 +289,7 @@ export default function App() {
     const newBlock = {
       id: crypto.randomUUID(),
       type,
-      content: type === "dual" ? "LEFT DIALOGUE || RIGHT DIALOGUE" : template?.hint || "",
+      content: template?.hint || "",
     };
 
     updateScript((s) => {
@@ -308,7 +304,7 @@ export default function App() {
         el.focus();
         autoGrow(el);
       }
-    }, 50);
+    }, 80);
   };
 
   const updateBlock = (blockId, content) => {
@@ -378,22 +374,25 @@ export default function App() {
 
       <div className="no-print sticky top-0 z-40 border-b border-slate-200 bg-slate-950 text-white shadow-lg">
         <div className="flex items-center justify-between gap-3 px-3 py-3 md:px-6">
-          <div className="flex items-center gap-3 min-w-0">
+          <div className="flex min-w-0 items-center gap-3">
             <button
               onClick={() => setShowMobileSidebar(true)}
               className="rounded-xl border border-white/10 bg-white/10 p-2 md:hidden"
             >
               <Menu size={18} />
             </button>
+
             <button
               onClick={() => setShowLeftPanel((v) => !v)}
               className="hidden rounded-xl border border-white/10 bg-white/10 p-2 md:block"
             >
               <PanelLeft size={18} />
             </button>
+
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-500 shadow-lg">
               <FileText size={18} />
             </div>
+
             <div className="min-w-0">
               <h1 className="truncate text-lg font-bold">Script Studio Pro</h1>
               <p className="truncate text-xs text-slate-300">Scene • Dialogue • Notes • Dual Dialogue • Outline</p>
@@ -401,9 +400,24 @@ export default function App() {
           </div>
 
           <div className="hidden items-center gap-2 md:flex">
-            <button onClick={() => setViewMode("editor")} className={`rounded-xl px-3 py-2 text-sm ${viewMode === "editor" ? "bg-white text-slate-900" : "bg-white/10"}`}>Editor</button>
-            <button onClick={() => setViewMode("outline")} className={`rounded-xl px-3 py-2 text-sm ${viewMode === "outline" ? "bg-white text-slate-900" : "bg-white/10"}`}>Outline</button>
-            <button onClick={() => setViewMode("preview")} className={`rounded-xl px-3 py-2 text-sm ${viewMode === "preview" ? "bg-white text-slate-900" : "bg-white/10"}`}>Preview</button>
+            <button
+              onClick={() => setViewMode("editor")}
+              className={`rounded-xl px-3 py-2 text-sm ${viewMode === "editor" ? "bg-white text-slate-900" : "bg-white/10"}`}
+            >
+              Editor
+            </button>
+            <button
+              onClick={() => setViewMode("outline")}
+              className={`rounded-xl px-3 py-2 text-sm ${viewMode === "outline" ? "bg-white text-slate-900" : "bg-white/10"}`}
+            >
+              Outline
+            </button>
+            <button
+              onClick={() => setViewMode("preview")}
+              className={`rounded-xl px-3 py-2 text-sm ${viewMode === "preview" ? "bg-white text-slate-900" : "bg-white/10"}`}
+            >
+              Preview
+            </button>
           </div>
         </div>
 
@@ -424,10 +438,20 @@ export default function App() {
       </div>
 
       <div className="flex">
-        {(showLeftPanel || showMobileSidebar) && (
-          <>
-            <div className="no-print fixed inset-0 z-40 bg-slate-950/50 md:hidden" onClick={() => setShowMobileSidebar(false)} />
-            <aside className={`no-print fixed left-0 top-0 z-50 h-full w-[88%] max-w-sm border-r border-slate-200 bg-white p-4 shadow-2xl md:sticky md:z-10 md:block md:h-[calc(100vh-0px)] md:w-80 ${showMobileSidebar ? "block" : "hidden md:block"}`}>
+        <>
+          {showMobileSidebar && (
+            <div
+              className="no-print fixed inset-0 z-40 bg-slate-950/50 md:hidden"
+              onClick={() => setShowMobileSidebar(false)}
+            />
+          )}
+
+          {(showLeftPanel || showMobileSidebar) && (
+            <aside
+              className={`no-print fixed left-0 top-0 z-50 h-full w-[88%] max-w-sm border-r border-slate-200 bg-white p-4 shadow-2xl md:sticky md:z-10 md:block md:h-[calc(100vh-0px)] md:w-80 ${
+                showMobileSidebar ? "block" : "hidden md:block"
+              }`}
+            >
               <div className="mb-4 flex items-center justify-between">
                 <div>
                   <h2 className="text-lg font-bold">Your Scripts</h2>
@@ -480,8 +504,8 @@ export default function App() {
                 ))}
               </div>
             </aside>
-          </>
-        )}
+          )}
+        </>
 
         <main className="min-w-0 flex-1">
           <div className="no-print border-b border-slate-200 bg-white px-4 py-4 shadow-sm md:px-8">
@@ -509,6 +533,27 @@ export default function App() {
               <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4"><p className="text-xs text-slate-500">Est. Pages</p><p className="mt-1 text-xl font-bold">{stats.pages}</p></div>
               <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4"><p className="text-xs text-slate-500">Scenes</p><p className="mt-1 text-xl font-bold">{stats.scenes}</p></div>
               <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4"><p className="text-xs text-slate-500">Mode</p><p className="mt-1 text-xl font-bold capitalize">{viewMode}</p></div>
+            </div>
+
+            <div className="mt-4 flex flex-wrap gap-2 md:hidden">
+              <button
+                onClick={() => setViewMode("editor")}
+                className={`rounded-xl px-3 py-2 text-sm ${viewMode === "editor" ? "bg-slate-950 text-white" : "border border-slate-200 bg-white"}`}
+              >
+                Editor
+              </button>
+              <button
+                onClick={() => setViewMode("outline")}
+                className={`rounded-xl px-3 py-2 text-sm ${viewMode === "outline" ? "bg-slate-950 text-white" : "border border-slate-200 bg-white"}`}
+              >
+                Outline
+              </button>
+              <button
+                onClick={() => setViewMode("preview")}
+                className={`rounded-xl px-3 py-2 text-sm ${viewMode === "preview" ? "bg-slate-950 text-white" : "border border-slate-200 bg-white"}`}
+              >
+                Preview
+              </button>
             </div>
           </div>
 
@@ -566,7 +611,7 @@ export default function App() {
                   {activeScript.blocks.map((block, index) => (
                     <div key={block.id} className={`group rounded-2xl border p-3 shadow-sm transition hover:shadow-md md:p-4 ${blockWrapper(block.type)}`}>
                       <div className="no-print mb-3 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
                           <span className="rounded-xl bg-white/80 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-600 shadow-sm">
                             {block.type}
                           </span>
