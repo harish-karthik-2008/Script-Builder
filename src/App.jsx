@@ -17,6 +17,7 @@ import {
   PanelLeft,
   Sparkles,
 } from "lucide-react";
+import { Analytics } from '@vercel/analytics/react';
 
 const BLOCK_TYPES = [
   { type: "scene", label: "Scene", hint: "INT./EXT. LOCATION - DAY" },
@@ -686,6 +687,7 @@ export default function App() {
           </div>
         </main>
       </div>
+      <Analytics />
     </div>
   );
 }
