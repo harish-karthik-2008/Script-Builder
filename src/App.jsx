@@ -61,7 +61,7 @@
 // }
 
 // function getBlockStyle(type) {
-//   const base = "w-full bg-transparent outline-none resize-none text-[15px] leading-7";
+//   const base = "w-full bg-transparent outline-none resize-none text-[15px] leading-[1.05] p-0 m-0 border-0 shadow-none";
 //   switch (type) {
 //     case "scene":
 //     case "transition":
@@ -70,11 +70,11 @@
 //     case "endAct":
 //       return `${base} uppercase tracking-wide font-semibold`;
 //     case "character":
-//       return `${base} text-center font-semibold uppercase`;
+//       return `${base} text-center font-semibold uppercase md:pl-[22%] md:pr-[22%]`;
 //     case "dialogue":
-//       return `${base} text-center md:px-40`;
+//       return `${base} text-left md:pl-[26%] md:pr-[26%]`;
 //     case "parens":
-//       return `${base} text-center italic text-slate-500 -mt-7`;
+//       return `${base} text-center italic text-slate-500 md:pl-[24%] md:pr-[24%]`;
 //     case "lyrics":
 //       return `${base} italic text-fuchsia-700`;
 //     case "note":
@@ -93,11 +93,11 @@
 //     case "action":
 //       return "bg-white border-slate-200";
 //     case "character":
-//       return "bg-violet-50 border-violet-200 md:mx-20";
+//       return "bg-violet-50 border-violet-200 py-1";
 //     case "parens":
-//       return "bg-rose-50 border-rose-200 md:mx-24 -mt-2";
+//       return "bg-rose-50 border-rose-200 -mt-3 py-0.5";
 //     case "dialogue":
-//       return "bg-white border-slate-200 md:mx-12 -mt-2";
+//       return "bg-white border-slate-200 -mt-3 py-0.5";
 //     case "transition":
 //       return "bg-emerald-50 border-emerald-200 text-right";
 //     case "shot":
@@ -597,7 +597,7 @@
 //                   <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Screenplay Preview</p>
 //                   <h2 className="mt-2 text-3xl font-bold">{activeScript.title}</h2>
 //                 </div>
-//                 <div className="space-y-3 font-mono text-[15px] leading-7">
+//                 <div className="space-y-3 font-mono text-[15px] leading-tight">
 //                   {activeScript.blocks.map((block) => (
 //                     <PreviewBlock key={block.id} block={block} />
 //                   ))}
@@ -617,9 +617,9 @@
 //                   </div>
 //                 </div>
 
-//                 <div className="space-y-0.5 p-3 md:p-8">
+//                 <div className="space-y-1 p-3 md:p-8">
 //                   {activeScript.blocks.map((block, index) => (
-//                     <div key={block.id} className={`group rounded-2xl border p-2 shadow-sm transition hover:shadow-md md:p-3 ${blockWrapper(block.type)}`}>
+//                     <div key={block.id} className={`group rounded-2xl border px-2 py-1 shadow-sm transition hover:shadow-md md:px-3 md:py-1.5 ${blockWrapper(block.type)}`}>
 //                       <div className="no-print mb-2 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
 //                         <div className="flex flex-wrap items-center gap-2">
 //                           <span className="rounded-xl bg-white/80 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-600 shadow-sm">
@@ -636,7 +636,7 @@
 //                       </div>
 
 //                       {block.type === "image" ? (
-//                         <div className="space-y-0.5">
+//                         <div className="space-y-1">
 //                           <div className="flex items-center gap-2 text-sm text-slate-500"><ImageIcon size={16} /> Image block</div>
 //                           <textarea
 //                             ref={(el) => {
@@ -682,7 +682,7 @@
 //                             autoGrow(e.target);
 //                           }}
 //                           rows={1}
-//                           className={getBlockStyle(block.type)}
+//                           className={getBlockStyle(block.type)} style={{ lineHeight: 1.05, paddingTop: 0, paddingBottom: 0, margin: 0 }}
 //                         />
 //                       )}
 //                     </div>
@@ -741,9 +741,9 @@
 //   const cls = {
 //     scene: "font-bold uppercase",
 //     action: "",
-//     character: "text-center font-semibold uppercase",
-//     parens: "text-center italic text-slate-500 -mt-2",
-//     dialogue: "mx-auto max-w-2xl text-center",
+//     character: "text-center font-semibold uppercase md:pl-[22%] md:pr-[22%] leading-[1.05]",
+//     parens: "text-center italic text-slate-500 md:pl-[24%] md:pr-[24%] -mt-2 leading-[1.05]",
+//     dialogue: "md:pl-[26%] md:pr-[26%] -mt-2 leading-[1.05]",
 //     transition: "text-right font-bold uppercase",
 //     shot: "font-bold uppercase",
 //     text: "",
@@ -759,7 +759,6 @@
 // }
 
 // export { createTestCases };
-
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -856,11 +855,11 @@ function blockWrapper(type) {
     case "action":
       return "bg-white border-slate-200";
     case "character":
-      return "bg-violet-50 border-violet-200 py-1";
+      return "bg-violet-50 border-violet-200 py-1 mb-0";
     case "parens":
-      return "bg-rose-50 border-rose-200 -mt-3 py-0.5";
+      return "bg-rose-50 border-rose-200 -mt-2 py-0.5 mb-2";
     case "dialogue":
-      return "bg-white border-slate-200 -mt-3 py-0.5";
+      return "bg-white border-slate-200 -mt-2 py-1 mb-2";
     case "transition":
       return "bg-emerald-50 border-emerald-200 text-right";
     case "shot":
@@ -1380,7 +1379,7 @@ export default function App() {
                   </div>
                 </div>
 
-                <div className="space-y-1 p-3 md:p-8">
+                <div className="space-y-2 p-3 md:p-8">
                   {activeScript.blocks.map((block, index) => (
                     <div key={block.id} className={`group rounded-2xl border px-2 py-1 shadow-sm transition hover:shadow-md md:px-3 md:py-1.5 ${blockWrapper(block.type)}`}>
                       <div className="no-print mb-2 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
@@ -1399,7 +1398,7 @@ export default function App() {
                       </div>
 
                       {block.type === "image" ? (
-                        <div className="space-y-1">
+                        <div className="space-y-2">
                           <div className="flex items-center gap-2 text-sm text-slate-500"><ImageIcon size={16} /> Image block</div>
                           <textarea
                             ref={(el) => {
@@ -1522,3 +1521,4 @@ function PreviewBlock({ block }) {
 }
 
 export { createTestCases };
+
