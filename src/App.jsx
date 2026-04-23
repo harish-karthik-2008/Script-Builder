@@ -93,11 +93,11 @@
 //     case "action":
 //       return "bg-white border-slate-200";
 //     case "character":
-//       return "bg-violet-50 border-violet-200 py-1";
+//       return "bg-violet-50 border-violet-200 py-1 mb-0";
 //     case "parens":
-//       return "bg-rose-50 border-rose-200 -mt-3 py-0.5";
+//       return "bg-rose-50 border-rose-200 -mt-2 py-0.5 mb-2";
 //     case "dialogue":
-//       return "bg-white border-slate-200 -mt-3 py-0.5";
+//       return "bg-white border-slate-200 -mt-2 py-1 mb-2";
 //     case "transition":
 //       return "bg-emerald-50 border-emerald-200 text-right";
 //     case "shot":
@@ -617,7 +617,7 @@
 //                   </div>
 //                 </div>
 
-//                 <div className="space-y-1 p-3 md:p-8">
+//                 <div className="space-y-2 p-3 md:p-8">
 //                   {activeScript.blocks.map((block, index) => (
 //                     <div key={block.id} className={`group rounded-2xl border px-2 py-1 shadow-sm transition hover:shadow-md md:px-3 md:py-1.5 ${blockWrapper(block.type)}`}>
 //                       <div className="no-print mb-2 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
@@ -636,7 +636,7 @@
 //                       </div>
 
 //                       {block.type === "image" ? (
-//                         <div className="space-y-1">
+//                         <div className="space-y-2">
 //                           <div className="flex items-center gap-2 text-sm text-slate-500"><ImageIcon size={16} /> Image block</div>
 //                           <textarea
 //                             ref={(el) => {
@@ -823,7 +823,8 @@ function slugify(text) {
 }
 
 function getBlockStyle(type) {
-  const base = "w-full bg-transparent outline-none resize-none text-[15px] leading-[1.05] p-0 m-0 border-0 shadow-none";
+  const base = "w-full bg-transparent outline-none resize-none text-[15px] leading-[1.1] p-0 m-0 border-0";
+
   switch (type) {
     case "scene":
     case "transition":
@@ -832,11 +833,11 @@ function getBlockStyle(type) {
     case "endAct":
       return `${base} uppercase tracking-wide font-semibold`;
     case "character":
-      return `${base} text-center font-semibold uppercase md:pl-[22%] md:pr-[22%]`;
+      return `${base} text-center font-semibold uppercase`;
     case "dialogue":
-      return `${base} text-left md:pl-[26%] md:pr-[26%]`;
+      return `${base} text-left md:ml-[30%] md:w-[45%] whitespace-pre-wrap break-all`;
     case "parens":
-      return `${base} text-center italic text-slate-500 md:pl-[24%] md:pr-[24%]`;
+      return `${base} text-center italic text-slate-500 -mt-2`;
     case "lyrics":
       return `${base} italic text-fuchsia-700`;
     case "note":
@@ -851,39 +852,39 @@ function getBlockStyle(type) {
 function blockWrapper(type) {
   switch (type) {
     case "scene":
-      return "bg-slate-50 border-slate-200";
+      return "bg-slate-50 border-slate-200 mb-6";
     case "action":
-      return "bg-white border-slate-200";
+      return "bg-white border-slate-200 mb-6";
     case "character":
-      return "bg-violet-50 border-violet-200 py-1 mb-0";
+      return "bg-violet-50 border-violet-200 mb-0";
     case "parens":
-      return "bg-rose-50 border-rose-200 -mt-2 py-0.5 mb-2";
+      return "bg-rose-50 border-rose-200 -mt-2 mb-0";
     case "dialogue":
-      return "bg-white border-slate-200 -mt-2 py-1 mb-2";
+      return "bg-white border-slate-200 -mt-2 mb-6";
     case "transition":
-      return "bg-emerald-50 border-emerald-200 text-right";
+      return "bg-emerald-50 border-emerald-200 text-right mb-6";
     case "shot":
-      return "bg-cyan-50 border-cyan-200";
+      return "bg-cyan-50 border-cyan-200 mb-6";
     case "text":
-      return "bg-white border-slate-200";
+      return "bg-white border-slate-200 mb-6";
     case "note":
-      return "bg-amber-50 border-amber-200 border-dashed";
+      return "bg-amber-50 border-amber-200 border-dashed mb-6";
     case "outline":
-      return "bg-blue-50 border-blue-200";
+      return "bg-blue-50 border-blue-200 mb-6";
     case "newAct":
-      return "bg-indigo-100 border-indigo-300 text-center";
+      return "bg-indigo-100 border-indigo-300 text-center mb-6";
     case "endAct":
-      return "bg-pink-100 border-pink-300 text-center";
+      return "bg-pink-100 border-pink-300 text-center mb-6";
     case "lyrics":
-      return "bg-fuchsia-50 border-fuchsia-200";
+      return "bg-fuchsia-50 border-fuchsia-200 mb-6";
     case "image":
-      return "bg-slate-50 border-slate-200";
+      return "bg-slate-50 border-slate-200 mb-6";
     case "sequence":
-      return "bg-teal-50 border-teal-200 font-semibold";
+      return "bg-teal-50 border-teal-200 font-semibold mb-6";
     case "dual":
-      return "bg-purple-50 border-purple-200";
+      return "bg-purple-50 border-purple-200 mb-6";
     default:
-      return "bg-white border-slate-200";
+      return "bg-white border-slate-200 mb-6";
   }
 }
 
@@ -918,19 +919,43 @@ function getWordCount(script) {
 function createTestCases() {
   return [
     {
-      name: "empty new script uses placeholder",
+      name: "empty new script uses empty first scene",
       input: DEFAULT_SCRIPT(),
-      check: (script) => script.blocks.length === 1 && script.blocks[0].content === "",
+      check: (script) =>
+        script.blocks.length === 1 &&
+        script.blocks[0].type === "scene" &&
+        script.blocks[0].content === "",
     },
     {
-      name: "dialogue block stays centered style",
+      name: "dialogue block starts from centered column and is left aligned",
       input: "dialogue",
-      check: (type) => getBlockStyle(type).includes("text-center"),
+      check: (type) =>
+        getBlockStyle(type).includes("text-left") && getBlockStyle(type).includes("md:pl-[30%]"),
     },
     {
       name: "parens style stays close to dialogue",
       input: "parens",
       check: (type) => getBlockStyle(type).includes("-mt-2"),
+    },
+    {
+      name: "scene style stays uppercase",
+      input: "scene",
+      check: (type) => getBlockStyle(type).includes("uppercase"),
+    },
+    {
+      name: "dialogue wrapper keeps larger spacing after grouped unit",
+      input: "dialogue",
+      check: (type) => blockWrapper(type).includes("mb-6"),
+    },
+    {
+      name: "character wrapper has no bottom gap",
+      input: "character",
+      check: (type) => blockWrapper(type).includes("mb-0"),
+    },
+    {
+      name: "parens wrapper has no bottom gap",
+      input: "parens",
+      check: (type) => blockWrapper(type).includes("mb-0"),
     },
   ];
 }
@@ -942,7 +967,9 @@ export default function App() {
       try {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length) return parsed;
-      } catch {}
+      } catch {
+        // ignore malformed local storage
+      }
     }
     return [DEFAULT_SCRIPT()];
   });
@@ -959,7 +986,9 @@ export default function App() {
 
   useEffect(() => {
     if (!activeId && scripts.length) setActiveId(scripts[0].id);
-    if (activeId && !scripts.find((s) => s.id === activeId) && scripts.length) setActiveId(scripts[0].id);
+    if (activeId && !scripts.find((s) => s.id === activeId) && scripts.length) {
+      setActiveId(scripts[0].id);
+    }
   }, [activeId, scripts]);
 
   useEffect(() => {
@@ -991,10 +1020,9 @@ export default function App() {
     });
   }, [scripts, viewMode]);
 
-  const activeScript = useMemo(
-    () => scripts.find((s) => s.id === activeId) || scripts[0],
-    [scripts, activeId]
-  );
+  const activeScript = useMemo(() => {
+    return scripts.find((s) => s.id === activeId) || scripts[0];
+  }, [scripts, activeId]);
 
   const filteredScripts = useMemo(() => {
     return scripts.filter((s) => s.title.toLowerCase().includes(search.toLowerCase()));
@@ -1041,6 +1069,7 @@ export default function App() {
     if (!activeScript) return;
     const confirmed = window.confirm(`Delete "${activeScript.title}"?`);
     if (!confirmed) return;
+
     const remaining = scripts.filter((s) => s.id !== activeScript.id);
     if (!remaining.length) {
       const fresh = DEFAULT_SCRIPT();
@@ -1048,6 +1077,7 @@ export default function App() {
       setActiveId(fresh.id);
       return;
     }
+
     setScripts(remaining);
     setActiveId(remaining[0].id);
   };
@@ -1116,19 +1146,129 @@ export default function App() {
     });
   };
 
-  const exportTxt = () => {
+  const exportPdf = () => {
     if (!activeScript) return;
-    const blob = new Blob([scriptToText(activeScript)], { type: "text/plain;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${slugify(activeScript.title)}.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
+
+    const previewHtml = activeScript.blocks
+      .map((block) => renderPreviewHtml(block))
+      .join("");
+
+    const win = window.open("", "_blank", "width=900,height=1200");
+    if (!win) return;
+
+    win.document.write(`
+      <html>
+        <head>
+          <title>${activeScript.title}</title>
+          <style>
+            body {
+              font-family: Courier New, monospace;
+              background: white;
+              color: black;
+              margin: 0;
+              padding: 40px 56px;
+              line-height: 1.4;
+            }
+            .title {
+              text-align: center;
+              font-size: 28px;
+              font-weight: bold;
+              margin-bottom: 36px;
+            }
+            .scene, .transition, .shot, .newAct, .endAct, .sequence {
+              font-weight: bold;
+              text-transform: uppercase;
+              margin-bottom: 18px;
+              white-space: pre-wrap;
+            }
+            .action, .text, .lyrics {
+              margin-bottom: 18px;
+              white-space: pre-wrap;
+            }
+            .character {
+              text-align: center;
+              text-transform: uppercase;
+              font-weight: bold;
+              margin-bottom: 0;
+              white-space: pre-wrap;
+            }
+            .parens {
+              text-align: center;
+              font-style: italic;
+              margin-top: -4px;
+              margin-bottom: 0;
+              color: #555;
+              white-space: pre-wrap;
+            }
+            .dialogue {
+              margin-left: 30%;
+              width: 45%;
+              text-align: left;
+              margin-top: -4px;
+              margin-bottom: 22px;
+              white-space: pre-wrap;
+              word-break: break-all;
+              overflow-wrap: break-word;
+            }
+            .note, .outline {
+              margin-bottom: 18px;
+              white-space: pre-wrap;
+            }
+            .dual {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 24px;
+              margin-bottom: 18px;
+            }
+            img {
+              max-width: 100%;
+              max-height: 320px;
+              display: block;
+              margin-bottom: 18px;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="title">${escapeHtml(activeScript.title)}</div>
+          ${previewHtml}
+        </body>
+      </html>
+    `);
+    win.document.close();
+    win.focus();
+    win.print();
   };
 
   const printScript = () => {
     window.print();
+  };
+
+  const escapeHtml = (value = "") =>
+    value
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/\"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+
+  const renderPreviewHtml = (block) => {
+    if (!block?.content && block.type !== "image") return `<div class="$action"></div>`;
+
+    if (block.type === "image") {
+      return block.content ? `<img src="${escapeHtml(block.content)}" alt="Reference" />` : "";
+    }
+
+    if (block.type === "dual") {
+      const [left = "", right = ""] = (block.content || "").split("||");
+      return `
+        <div class="dual">
+          <div>${escapeHtml(left.trim())}</div>
+          <div>${escapeHtml(right.trim())}</div>
+        </div>
+      `;
+    }
+
+    return `<div class="${block.type}">${escapeHtml(block.content || "")}</div>`;
   };
 
   const saveNotice = () => {
@@ -1231,7 +1371,10 @@ export default function App() {
                   <h2 className="text-lg font-bold">Your Scripts</h2>
                   <p className="text-sm text-slate-500">Save and manage projects</p>
                 </div>
-                <button className="rounded-xl p-2 hover:bg-slate-100 md:hidden" onClick={() => setShowMobileSidebar(false)}>
+                <button
+                  className="rounded-xl p-2 hover:bg-slate-100 md:hidden"
+                  onClick={() => setShowMobileSidebar(false)}
+                >
                   <X size={18} />
                 </button>
               </div>
@@ -1288,13 +1431,15 @@ export default function App() {
                   onChange={(e) => renameScript(e.target.value)}
                   className="w-full min-w-0 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-xl font-bold outline-none focus:border-slate-400 md:max-w-xl"
                 />
-                <p className="mt-2 text-sm text-slate-500">Auto-saved locally • Last updated {formatDate(activeScript.updatedAt)}</p>
+                <p className="mt-2 text-sm text-slate-500">
+                  Auto-saved locally • Last updated {formatDate(activeScript.updatedAt)}
+                </p>
               </div>
 
               <div className="flex flex-wrap items-center gap-2">
                 <button onClick={duplicateScript} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium"><Copy className="mr-2 inline" size={16} />Duplicate</button>
                 <button onClick={saveNotice} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium"><Save className="mr-2 inline" size={16} />Save</button>
-                <button onClick={exportTxt} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium"><Download className="mr-2 inline" size={16} />Export</button>
+                <button onClick={exportPdf} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium"><Download className="mr-2 inline" size={16} />Export PDF</button>
                 <button onClick={printScript} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium"><Printer className="mr-2 inline" size={16} />Print</button>
                 <button onClick={deleteScript} className="rounded-2xl bg-rose-600 px-4 py-3 text-sm font-semibold text-white"><Trash2 className="mr-2 inline" size={16} />Delete</button>
               </div>
@@ -1335,17 +1480,20 @@ export default function App() {
                 <div className="mb-6 flex items-center gap-3">
                   <div className="rounded-2xl bg-blue-100 p-3 text-blue-700"><Edit3 size={18} /></div>
                   <div>
-                    <h3 className="text-xl font-bold">Story Outline</h3>
-                    <p className="text-sm text-slate-500">Quick structure view of scenes, sequences, acts, and notes</p>
+                    <h3 className="text-xl font-bold">Action Outline</h3>
+                    <p className="text-sm text-slate-500">Only action blocks are shown here for story flow</p>
                   </div>
                 </div>
                 <div className="space-y-4">
                   {activeScript.blocks.map((block, i) => {
-                    if (!["scene", "outline", "sequence", "newAct", "endAct", "note", "shot"].includes(block.type)) return null;
+                    if (block.type !== "action") {
+                      return null;
+                    }
+
                     return (
                       <div key={block.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                         <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">{block.type}</div>
-                        <div className="font-medium">{block.content || `${block.type} ${i + 1}`}</div>
+                        <div className="font-medium whitespace-pre-wrap">{block.content || `action ${i + 1}`}</div>
                       </div>
                     );
                   })}
@@ -1381,13 +1529,21 @@ export default function App() {
 
                 <div className="space-y-2 p-3 md:p-8">
                   {activeScript.blocks.map((block, index) => (
-                    <div key={block.id} className={`group rounded-2xl border px-2 py-1 shadow-sm transition hover:shadow-md md:px-3 md:py-1.5 ${blockWrapper(block.type)}`}>
+                    <div
+                      key={block.id}
+                      className={`group rounded-2xl border px-2 py-1 shadow-sm transition hover:shadow-md md:px-3 md:py-1.5 ${blockWrapper(block.type)}`}
+                    >
                       <div className="no-print mb-2 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                         <div className="flex flex-wrap items-center gap-2">
                           <span className="rounded-xl bg-white/80 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-600 shadow-sm">
                             {block.type}
                           </span>
-                          <button onClick={() => addBlock(block.type, index + 1)} className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs">+ add below</button>
+                          <button
+                            onClick={() => addBlock(block.type, index + 1)}
+                            className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs"
+                          >
+                            + add below
+                          </button>
                         </div>
                         <div className="flex items-center gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition">
                           <button onClick={() => moveBlock(index, -1)} className="rounded-xl border border-slate-200 bg-white p-2"><ChevronUp size={16} /></button>
@@ -1444,7 +1600,8 @@ export default function App() {
                             autoGrow(e.target);
                           }}
                           rows={1}
-                          className={getBlockStyle(block.type)} style={{ lineHeight: 1.05, paddingTop: 0, paddingBottom: 0, margin: 0 }}
+                          className={getBlockStyle(block.type)}
+                          style={{ lineHeight: 1.05, paddingTop: 0, paddingBottom: 0, margin: 0 }}
                         />
                       )}
                     </div>
@@ -1461,6 +1618,7 @@ export default function App() {
 
 function DualDialogueEditor({ value, onChange }) {
   const [left = "", right = ""] = value.split("||");
+
   return (
     <div className="grid gap-3 md:grid-cols-2">
       <div className="rounded-2xl border border-slate-200 bg-white p-4">
@@ -1487,7 +1645,9 @@ function DualDialogueEditor({ value, onChange }) {
 
 function PreviewBlock({ block }) {
   if (block.type === "image") {
-    return block.content ? <img src={block.content} alt="Reference" className="max-h-80 rounded-2xl border border-slate-200" /> : null;
+    return block.content ? (
+      <img src={block.content} alt="Reference" className="max-h-80 rounded-2xl border border-slate-200" />
+    ) : null;
   }
 
   if (block.type === "dual") {
@@ -1503,9 +1663,9 @@ function PreviewBlock({ block }) {
   const cls = {
     scene: "font-bold uppercase",
     action: "",
-    character: "text-center font-semibold uppercase md:pl-[22%] md:pr-[22%] leading-[1.05]",
-    parens: "text-center italic text-slate-500 md:pl-[24%] md:pr-[24%] -mt-2 leading-[1.05]",
-    dialogue: "md:pl-[26%] md:pr-[26%] -mt-2 leading-[1.05]",
+    character: "text-center font-semibold uppercase",
+    parens: "text-center italic text-slate-500 -mt-2",
+    dialogue: "text-left md:ml-[30%] md:w-[45%] break-all whitespace-pre-wrap",
     transition: "text-right font-bold uppercase",
     shot: "font-bold uppercase",
     text: "",
@@ -1521,4 +1681,6 @@ function PreviewBlock({ block }) {
 }
 
 export { createTestCases };
+
+
 
