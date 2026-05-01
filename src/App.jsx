@@ -1,3 +1,6 @@
+
+
+
 // import React, { useEffect, useMemo, useRef, useState } from "react";
 
 // const BLOCK_TYPES = [
@@ -171,7 +174,8 @@
 //     <div style="font-family: 'Courier New', monospace; background: white; color: black; width: 794px; min-height: 1123px; padding: 64px 72px; box-sizing: border-box;">
 //       <style>
 //         .pdf-title-page { min-height: 980px; page-break-after: always; position: relative; }
-//         .pdf-title { text-align: center; font-size: 28px; font-weight: bold; margin-top: 180px; text-transform: uppercase; }
+//         .pdf-title-page { min-height: 980px; page-break-after: always; position: relative; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+//         .pdf-title { text-align: center; font-size: 28px; font-weight: bold; text-transform: uppercase; }
 //         .pdf-author { text-align: center; font-size: 16px; margin-top: 18px; }
 //         .pdf-contact { position: absolute; left: 0; bottom: 40px; font-size: 14px; line-height: 1.45; }
 //         .scene, .shot, .newAct, .endAct, .sequence { font-weight: bold; text-transform: uppercase; margin-bottom: 24px; white-space: pre-wrap; }
@@ -186,7 +190,7 @@
 //       </style>
 //       <section class="pdf-title-page">
 //         <div class="pdf-title">${escapeHtml(script.title || "Untitled Script")}</div>
-//         <div class="pdf-author">${escapeHtml(script.author || "")}</div>
+//         <div class="pdf-author">${script.author ? `Written By : ${escapeHtml(script.author)}` : "Written By :"}</div>
 //         <div class="pdf-contact">
 //           <div>${escapeHtml(script.address || "")}</div>
 //           <div>${escapeHtml(script.phone || "")}</div>
@@ -214,8 +218,8 @@
 //     scene: "font-bold uppercase mb-6 whitespace-pre-wrap",
 //     action: "mb-6 whitespace-pre-wrap break-words",
 //     character: "text-center font-semibold uppercase mb-0 whitespace-pre-wrap",
-//     parens: "text-center italic text-slate-500 -mt-2 mb-0 whitespace-pre-wrap",
-//     dialogue: "text-left md:ml-[30%] md:w-[45%] -mt-2 mb-6 whitespace-pre-wrap break-words",
+//     parens: "text-center italic text-slate-500 mt-1 mb-0 whitespace-pre-wrap",
+//     dialogue: "text-left md:ml-[30%] md:w-[45%] mt-1 mb-6 whitespace-pre-wrap break-words",
 //     transition: "text-right font-bold uppercase mb-6 whitespace-pre-wrap",
 //     shot: "font-bold uppercase mb-6 whitespace-pre-wrap",
 //     text: "mb-6 whitespace-pre-wrap break-words",
@@ -800,10 +804,10 @@
 
 //             {viewMode === "preview" && (
 //               <div ref={previewRef} className="mx-auto max-w-4xl rounded-[28px] border border-slate-300 bg-white p-6 font-mono shadow-xl md:p-10">
-//                 <section className="relative min-h-[900px] border-b border-slate-200 pb-10">
-//                   <div className="pt-40 text-center">
+//                 <section className="relative flex min-h-[900px] flex-col items-center justify-center border-b border-slate-200 pb-10">
+//                   <div className="text-center">
 //                     <h2 className="text-3xl font-bold uppercase tracking-wide">{activeScript.title || "Untitled Script"}</h2>
-//                     <p className="mt-5 text-base">{activeScript.author || "Author"}</p>
+//                     <p className="mt-5 text-base">Written By : {activeScript.author || "Author"}</p>
 //                   </div>
 //                   <div className="absolute bottom-10 left-0 text-left text-sm leading-6 text-slate-700">
 //                     <p>{activeScript.address || "Address"}</p>
@@ -911,8 +915,6 @@
 // }
 
 // export { createTestCases };
-
-
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
@@ -1450,17 +1452,26 @@ export default function App() {
         y += lines.length * lineHeight + (options.after || 8);
       };
 
+      // CENTER TITLE PAGE PROPERLY (VERTICAL + HORIZONTAL)
+      const centerY = pageHeight / 2;
+
       pdf.setFont("courier", "bold");
       pdf.setFontSize(22);
-      pdf.text(String(activeScript.title || "Untitled Script").toUpperCase(), pageWidth / 2, 75, {
-        align: "center",
-      });
+      pdf.text(
+        String(activeScript.title || "Untitled Script").toUpperCase(),
+        pageWidth / 2,
+        centerY - 10,
+        { align: "center" }
+      );
 
       pdf.setFont("courier", "normal");
       pdf.setFontSize(12);
-      if (activeScript.author) {
-        pdf.text(String(activeScript.author), pageWidth / 2, 88, { align: "center" });
-      }
+      pdf.text(
+        `Written By : ${activeScript.author || ""}`,
+        pageWidth / 2,
+        centerY + 5,
+        { align: "center" }
+      );
 
       pdf.setFontSize(10);
       const contactY = pageHeight - 35;
@@ -1828,3 +1839,4 @@ function PreviewBlock({ block }) {
 }
 
 export { createTestCases };
+
