@@ -24,7 +24,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       manifest: {
         name: 'Script Writing App',
-        short_name: 'ScriptApp',
+        short_name: 'Script Studio',
         description: 'Professional screenplay writing app',
         theme_color: '#0f172a',
         background_color: '#0f172a',
